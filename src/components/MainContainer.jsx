@@ -1,10 +1,12 @@
 import StatBar from './StatBar'
 import ElementsContainers from './ElementsContainers'
 import PokemonTypesBox from './PokemonTypesBox'
-import { usePokemon } from '../custom hooks/usePokemon'
+import { useContext } from 'react'
+import { PokemonContext } from '../PokemonContext'
 
 export default function MainContainer () {
-  const { pokemonData: pokemon } = usePokemon()
+  // const { pokemonData: pokemon } = usePokemon()
+  const { pokemonData: pokemon } = useContext(PokemonContext)
 
   return (
     <main className='w-5/6 flex flex-col m-auto overflow-hidden'>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export function usePokemon () {
-  const [id, setId] = useState(7)
+export function usePokemon ({ id }) {
   const [pokemonData, setPokemonData] = useState({})
   const api = `https://pokeapi.co/api/v2/pokemon/${id}`
   useEffect(() => {
@@ -27,23 +26,19 @@ export function usePokemon () {
 
         const evolutionChainBase = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionChainData.chain.species.name}`)).json()
 
-        if (evolutionChainData.chain.evolves_to.length <= 0) {
-          pokemonResData.evolutionChain.push({ name: evolutionChainBase.name, img: evolutionChainBase.sprites.other['official-artwork'].front_default })
+        pokemonResData.evolutionChain.push({ name: evolutionChainBase.name, img: evolutionChainBase.sprites.other['official-artwork'].front_default })
+
+        if (evolutionChainData.chain.evolves_to.length > 0 && evolutionChainData.chain.evolves_to[0].evolves_to.length <= 0) {
+          const evolutionChainFirstEvolve = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionChainData.chain.evolves_to[0].species?.name}`)).json()
+          pokemonResData.evolutionChain.push({ name: evolutionChainFirstEvolve.name, img: evolutionChainFirstEvolve.sprites.other['official-artwork'].front_default })
         }
 
         if (evolutionChainData.chain.evolves_to.length > 0 && evolutionChainData.chain.evolves_to[0].evolves_to.length > 0) {
           const evolutionChainFirstEvolve = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionChainData.chain.evolves_to[0].species?.name}`)).json()
           const evolutionChainLastEvolve = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionChainData.chain.evolves_to[0].evolves_to[0]?.species.name}`)).json()
 
-          pokemonResData.evolutionChain.push({ name: evolutionChainBase.name, img: evolutionChainBase.sprites.other['official-artwork'].front_default })
           pokemonResData.evolutionChain.push({ name: evolutionChainFirstEvolve.name, img: evolutionChainFirstEvolve.sprites.other['official-artwork'].front_default })
           pokemonResData.evolutionChain.push({ name: evolutionChainLastEvolve.name, img: evolutionChainLastEvolve.sprites.other['official-artwork'].front_default })
-        }
-
-        if (evolutionChainData.chain.evolves_to.length > 0 && evolutionChainData.chain.evolves_to[0].evolves_to.length <= 0) {
-          const evolutionChainFirstEvolve = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionChainData.chain.evolves_to[0].species?.name}`)).json()
-          pokemonResData.evolutionChain.push({ name: evolutionChainBase.name, img: evolutionChainBase.sprites.other['official-artwork'].front_default })
-          pokemonResData.evolutionChain.push({ name: evolutionChainFirstEvolve.name, img: evolutionChainFirstEvolve.sprites.other['official-artwork'].front_default })
         }
 
         setPokemonData(pokemonResData)
@@ -55,5 +50,5 @@ export function usePokemon () {
     fetchData()
   }, [id])
 
-  return { pokemonData, setId }
+  return { pokemonData }
 }
