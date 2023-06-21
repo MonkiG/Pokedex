@@ -5,6 +5,7 @@ import { PokemonContext } from './PokemonContext'
 
 function App () {
   const { pokemonData } = useContext(PokemonContext)
+  // Intentar poner el backgroun en un useState
   return (
     <div className='h-full' style={{ backgroundImage: pokemonData.specieColor }}>
       <Header />
